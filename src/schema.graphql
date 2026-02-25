@@ -1,0 +1,338 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Comment {
+  content: String
+  "ISO-8601"
+  createdAt: DateTime
+  id: String
+  isDeleted: Boolean!
+  isPublic: Boolean!
+  owner: User
+  parent: Commentable
+  reportCount: Int!
+}
+
+type Commentable {
+  comments: [Comment]
+  id: String
+}
+
+type Ingredient {
+  "ISO-8601"
+  createdDate: Date
+  description: String
+  id: BigInteger
+  imageUrl: String
+  image_file_name: String
+  isDeleted: Boolean!
+  isPublic: Boolean!
+  name: String
+  owner: User
+  type: IngredientType
+  "ISO-8601"
+  updatedDate: Date
+}
+
+type IngredientType {
+  description: String
+  id: BigInteger
+  imageUrl: String
+  image_file_name: String
+  name: String
+}
+
+"Mutation root"
+type Mutation {
+  "Add a comment on a recipe"
+  addComment(content: String, ownerId: String, recipeId: String): Comment
+  "Add a new ingredient"
+  addIngredient(description: String, imageFileName: String, isPublic: Boolean, name: String, ownerId: String, typeId: BigInteger): Ingredient
+  "Add a report on a reportable object"
+  addReport(message: String, reporterId: String, targetId: String, type: ReportType): Report
+  "Add a new user"
+  addUser(email: String, firstName: String, lastName: String, password: String, pseudo: String, roles: [UserType]): User
+}
+
+"Query root"
+type Query {
+  "Get all comments"
+  comments: [Comment]
+  "Get an ingredient by its ID"
+  ingredient(id: BigInteger): Ingredient
+  "Get all ingredient types"
+  ingredientTypes: [IngredientType]
+  "Get all ingredients"
+  ingredients: [Ingredient]
+  "Get a recipe by its ID"
+  recipe(id: String): Recipe
+  "Get all recipe types"
+  recipeTypes: [RecipeType]
+  "Get all recipes"
+  recipes: [Recipe]
+  "Get all reports"
+  reports: [Report]
+  "Advanced search for ingredients with multiple filters and sorting"
+  searchIngredients(filter: IngredientFilterInput, sortBy: [IngredientSortInput]): [Ingredient]
+  "Advanced search for recipes with multiple filters and sorting"
+  searchRecipes(filter: RecipeFilterInput, sortBy: [RecipeSortInput]): [Recipe]
+  "Get a user by its ID"
+  user(id: String): User
+  "Get all users"
+  users: [User]
+}
+
+type Recipe {
+  author_note: String
+  comments: [Comment]
+  cooking_time: Int
+  "ISO-8601"
+  createdDate: Date!
+  description: String
+  difficulty: RecipeDifficulty
+  id: String
+  image_file_name: String
+  is_deleted: Boolean!
+  is_public: Boolean!
+  language: String!
+  likeCount: Int!
+  likes: [RecipeLike]
+  owner: User
+  preparation_time: Int
+  recipeIngredients: [RecipeIngredient]
+  recipe_steps: [RecipeStep]
+  servings_size: Int
+  tags: [String]
+  title: String!
+  type: RecipeType
+  "ISO-8601"
+  updatedDate: Date
+}
+
+type RecipeIngredient {
+  id: String
+  ingredient: Ingredient
+  ingredient_state: QuantityState
+  note: String
+  quantity: Float
+  quantity_type: QuantityType
+  recipe: Recipe
+  required: Boolean!
+}
+
+type RecipeLike {
+  id: RecipeLikeId
+  "ISO-8601"
+  likedAt: DateTime
+  recipe: Recipe
+  user: User
+}
+
+type RecipeLikeId {
+  recipeId: String
+  userId: String
+}
+
+type RecipeStep {
+  comments: [Comment]
+  id: String
+  recipe: Recipe
+  step_description: String!
+  step_number: Int!
+}
+
+type RecipeType {
+  id: String
+  name: String
+}
+
+type Report {
+  "ISO-8601"
+  createdDate: Date
+  id: String
+  message: String
+  "Get the target as a Recipe if applicable"
+  recipe: Recipe
+  "Get the target as a RecipeStep if applicable"
+  recipeStep: RecipeStep
+  reporter: User
+  resolved: Boolean!
+  target: Reportable
+  targetType: String
+  type: ReportType
+  "ISO-8601"
+  updatedDate: Date
+  "Get the target as a User if applicable"
+  user: User
+}
+
+type Reportable {
+  id: String
+}
+
+type User {
+  "ISO-8601"
+  createdDate: Date
+  email: String
+  firstName: String
+  id: String
+  lastName: String
+  pseudo: String
+  recipeLikes: [RecipeLike]
+  roles: [UserType]
+  "ISO-8601"
+  updatedDate: Date
+}
+
+enum IngredientSortField {
+  CREATED_DATE
+  NAME
+}
+
+enum QuantityState {
+  CHOPPED
+  CRUSHED
+  CRUSY
+  DICED
+  DRIED
+  FLAKED
+  FRESH
+  FROZEN
+  GRATED
+  GROUND
+  LIQUID
+  MASHED
+  MELTED
+  MINCED
+  PEELED
+  POWDERED
+  RIBBONED
+  SHREDDED
+  SLICED
+  WHOLE
+}
+
+enum QuantityType {
+  BOTTLE
+  CAN
+  CL
+  CLOVE
+  CUP
+  DASH
+  FL_OZ
+  G
+  HEART
+  KG
+  L
+  LB
+  LEAF
+  MG
+  ML
+  NONE
+  OZ
+  PACK
+  PINCH
+  SLICE
+  TBSP
+  TSP
+  UNIT
+}
+
+enum RecipeDifficulty {
+  EASY
+  HARD
+  MEDIUM
+  VERY_EASY
+  VERY_HARD
+}
+
+enum RecipeSortField {
+  COOKING_TIME
+  CREATED_DATE
+  LIKE_COUNT
+  PREPARATION_TIME
+  TITLE
+}
+
+enum ReportType {
+  COPYRIGHT_VIOLATION
+  HARASSMENT
+  HATE_SPEECH
+  INAPPROPRIATE_CONTENT
+  LOW_QUALITY
+  MISINFORMATION
+  OFF_TOPIC
+  OTHER
+  SPAM
+  TECHNICAL_ISSUE
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+enum UserType {
+  ADMINISTRATOR
+  BANNED
+  MODERATOR
+  STANDARD
+}
+
+"Scalar for BigDecimal"
+scalar BigDecimal
+
+"Scalar for BigInteger"
+scalar BigInteger
+
+"Scalar for Date"
+scalar Date
+
+"Scalar for DateTime"
+scalar DateTime
+
+input IngredientFilterInput {
+  isDeleted: Boolean
+  isPublic: Boolean
+  name: String
+  ownerId: String
+  typeId: BigInteger
+  typeName: String
+}
+
+input IngredientSortInput {
+  direction: SortDirection
+  field: IngredientSortField
+}
+
+input IntFilterInput {
+  eq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+}
+
+input RecipeFilterInput {
+  cookingTime: IntFilterInput
+  difficulty: RecipeDifficulty
+  ingredientIds: [BigInteger]
+  ingredientNames: [String]
+  isDeleted: Boolean
+  isPublic: Boolean
+  language: String
+  ownerId: String
+  preparationTime: IntFilterInput
+  servingSize: IntFilterInput
+  tags: [String]
+  title: String
+  typeId: String
+  typeName: String
+}
+
+input RecipeSortInput {
+  direction: SortDirection
+  field: RecipeSortField
+}
