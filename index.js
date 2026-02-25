@@ -1,17 +1,24 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import fs from "fs";
-import resolers from './src/resolvers/index.js';
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { resolvers } from "./src/resolvers/index.js";
 
-const typeDefs = fs.readFileSync("./src/schema.graphql", "utf-8");
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Lecture du schéma GraphQL depuis le fichier schema
+const typeDefs = readFileSync(join(__dirname, "src/schema.graphql"), "utf-8");
+
+// Création du serveur Apollo
 const server = new ApolloServer({
     typeDefs,
-    resolvers: resolers,
+    resolvers
 });
 
+// Démarrage du serveur standalone (HTTP intégré)
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
 });
 
-console.log(`Server running at port ${url}`);
+console.log(`Apollo server sur ${url}`);
