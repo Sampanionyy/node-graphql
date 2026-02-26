@@ -10,13 +10,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Lecture du schéma GraphQL depuis le fichier schema
 const typeDefs = readFileSync(join(__dirname, "src/schema.graphql"), "utf-8");
 
-// Création du serveur Apollo
+// Création du serveur 
 const server = new ApolloServer({
     typeDefs,
     resolvers
 });
 
-// Démarrage du serveur standalone (HTTP intégré)
+// Démarrage du serveur
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
 });

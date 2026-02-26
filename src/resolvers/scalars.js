@@ -1,8 +1,8 @@
 export const scalarResolvers = {
     BigInteger: {
-        serialize:    (value) => value?.toString() ?? null,
-        parseValue:   (value) => BigInt(value),
-        parseLiteral: (ast)   => BigInt(ast.value),
+        serialize:    (value) => value?.toString() ?? null, // quand le serveur renvoie une réponse GraphQL -> toString()
+        parseValue:   (value) => BigInt(value), // quand le client envoie une requête GraphQL -> BigInt()
+        parseLiteral: (ast)   => BigInt(ast.value), // quand le client envoie une requête GraphQL avec une valeur littérale -> BigInt()
     },
     Date: {
         serialize:    (value) => value,
